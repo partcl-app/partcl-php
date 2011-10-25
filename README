@@ -1,0 +1,8 @@
+Usage Example
+
+require_once('PartclAPI.php');
+PartclAPI::setPublishKey('6edd28ff5ba123046765c48b66df11cd');
+	
+$ar = array('key' => 'value');
+
+PartclAPI::send('chat_demo', $ar);
