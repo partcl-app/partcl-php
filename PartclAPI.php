@@ -13,6 +13,6 @@ class PartclAPI {
 		}
 		$url = 'http://partcl.com/publish?publish_key='. self::$publish_key .'&id='. $tag .'&value='. $val;
 		
-		file_get_contents($url);
+		file_get_contents(urlencode($url));
 	}
 }
