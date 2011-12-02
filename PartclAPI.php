@@ -11,7 +11,10 @@ class PartclAPI {
 		if(is_array($val) ) {
 			$val = json_encode($val);
 		}
-		$url = 'http://partcl.com/publish?publish_key='. self::$publish_key .'&id='. $tag .'&value='. urlencode($val);
+		else {
+			$val = urlencode($val);
+		}
+		$url = 'http://partcl.com/publish?publish_key='. self::$publish_key .'&id='. $tag .'&value='. $val;
 		
 		file_get_contents($url);
 	}
