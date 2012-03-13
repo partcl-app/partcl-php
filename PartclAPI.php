@@ -29,7 +29,7 @@ class PartclAPI {
 	}
 	
 	/*
-		@param $tag Mixed - tag code to fetch
+		@param $tag Mixed - tag code to fetch (one tag or array of tags)
 		@return Boolean|Mixed - tag value or boolean if error
 		
 		!IMPORTANT! You must set your public web_key perviosly to fetch any data (see setWebKey function)
@@ -37,6 +37,10 @@ class PartclAPI {
 		Examples:
 			PartclAPI::setWebKey('<your web_key>');
 			echo PartclAPI::get('srv:time.gmt'); // output e.g. 11:58:37:529
+			
+			Multiple tag at once:
+			
+			var_dump( PartclAPI::get(Array('srv:time.gmt','srv:all.today.messages')) );
 		
 	*/
 	public static function get($tag = null) {
@@ -45,17 +49,38 @@ class PartclAPI {
 		
 		$_server = rand(1,2); //round server
 		$sessionId = rand() . '_' . rand(1, 99999);
+		
+		$_tags = Array();
+		if (is_array($tag))
+		{
+			foreach($tag as $x)
+			{
+				$x = trim($x);
 				
-		$url = 'http://push'.$_server.'.partcl.com/poll?tags='.trim($tag).'&sessionId='.$sessionId.'&clientId='.self::$web_key.'&_='.microtime(true);
+				if ((!empty($x)) && (!in_array($x, $_tags)))
+					$_tags[] = trim($x);
+			}
+		}
+		else
+			$_tags[] = trim($tag);
+				
+		$url = 'http://push'.$_server.'.partcl.com/poll?tags='.implode(',', $_tags).'&sessionId='.$sessionId.'&clientId='.self::$web_key.'&_='.microtime(true);
 		$_resp = file_get_contents($url);
 		
 		try
 		{
 			$obj = json_decode($_resp, true);
+			$_return = Array();
 			
-			if (($obj['status'] == 'OK') && (array_key_exists('data', $obj)) && (array_key_exists($tag, $obj['data'])))
+			if (($obj['status'] == 'OK') && (array_key_exists('data', $obj)))
 			{
-				return $obj['data'][ $tag ];
+				foreach($_tags as $x)
+				{
+					if (array_key_exists($x, $obj['data']))
+						$_return[ $x ] = $obj['data'][ $x ];				
+				}
+				
+				return $_return;
 			}
 			else
 				return false;
