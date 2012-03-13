@@ -29,7 +29,8 @@ class PartclAPI {
 	}
 	
 	/*
-		@param $tag Mixed - tag code to fetch (one tag or array of tags)
+		@param Mixed $tag - tag code to fetch (one tag or array of tags)
+		@param Boolean $decodedValueAsJson - if set to true, automated decoding tag value as json string
 		@return Boolean|Mixed - tag value or boolean if error
 		
 		!IMPORTANT! You must set your public web_key perviosly to fetch any data (see setWebKey function)
@@ -43,7 +44,7 @@ class PartclAPI {
 			var_dump( PartclAPI::get(Array('srv:time.gmt','srv:all.today.messages')) );
 		
 	*/
-	public static function get($tag = null) {
+	public static function get($tag = null, $decodedValueAsJson = false) {
 		if (empty($tag)) return false;
 		if (empty(self::$web_key)) return false;
 		
@@ -81,7 +82,12 @@ class PartclAPI {
 				foreach($_tags as $x)
 				{
 					if (array_key_exists($x, $obj['data']))
-						$_return[ $x ] = $obj['data'][ $x ];				
+					{
+						if ($decodedValueAsJson === true)
+							$_return[ $x ] = json_decode($obj['data'][ $x ], true);
+						else
+							$_return[ $x ] = $obj['data'][ $x ];
+					}
 				}
 				
 				if ($output_type == 'array')
