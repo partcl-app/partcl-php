@@ -47,12 +47,16 @@ class PartclAPI {
 		if (empty($tag)) return false;
 		if (empty(self::$web_key)) return false;
 		
+		$output_type = 'val'; //'array'
+		
 		$_server = rand(1,2); //round server
 		$sessionId = rand() . '_' . rand(1, 99999);
 		
 		$_tags = Array();
 		if (is_array($tag))
 		{
+			$output_type = 'array';
+			
 			foreach($tag as $x)
 			{
 				$x = trim($x);
@@ -80,7 +84,10 @@ class PartclAPI {
 						$_return[ $x ] = $obj['data'][ $x ];				
 				}
 				
-				return $_return;
+				if ($output_type == 'array')
+					return $_return;
+				else
+					return array_shift($_return);
 			}
 			else
 				return false;
