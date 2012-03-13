@@ -1,8 +1,22 @@
 Usage Example
 
 require_once('PartclAPI.php');
+
+Publish:
+
 PartclAPI::setPublishKey('6edd28ff5ba123046765c48b66df11cd');
 	
 $ar = array('key' => 'value');
 
 PartclAPI::send('chat_demo', $ar);
+
+
+Getting tag data (latest value):
+
+PartclAPI::setWebKey('101a0a5d5ed4dd590714d5dbb444757e');
+
+echo PartclAPI::get('srv:time.gmt');
+
+var_dump( PartclAPI::get(Array('srv:time.gmt','srv:all.today.messages')) );
+		
+
